@@ -1,0 +1,49 @@
+<div *ngIf="data" fxLayout="row" fxFill>
+    <div flex="50%" class="graph">
+        <ngx-charts-gauge [view]="view" [scheme]="colorScheme" [legend]="true" [results]="data" [min]="0" [max]="100" [angleSpan]="240" [startAngle]="-120" [units]="'alerts'" [bigSegments]="10" [smallSegments]="5" (select)="onSelect($event)">
+        </ngx-charts-gauge>
+    </div>
+    <div flex="50%" class="graph">
+        <ngx-charts-pie-chart [view]="view" [scheme]="colorScheme" [results]="data" [legend]="showLegend" [explodeSlices]="explodeSlices" [labels]="showLabels" [doughnut]="doughnut" [gradient]="gradient" (select)="onSelect($event)">
+        </ngx-charts-pie-chart>
+    </div>
+</div>
+<div flex="50">
+    -- add to colorScheme --<br/>
+    <input [(ngModel)]="reading.name"><br/>
+    <input [(ngModel)]="reading.value"><br/>
+    <input type="checkbox" [(ngModel)]="showLabels"> Show Labels<br/>
+    <input type="checkbox" [(ngModel)]="explodeSlices"> explode<br/>
+    <input type="checkbox" [(ngModel)]="doughnut"> Doughnut<br/>
+    <button (click)="addReading()">Add Reading</button>
+</div>
+
+<ngx-charts-directed-graph class="chart-container" [view]="view" [legend]="true" [links]="hierarchialGraph.links" (legendLabelClick)="onLegendLabelClick($event)" [nodes]="hierarchialGraph.nodes" [scheme]="colorScheme" [orientation]="'LR'" [curve]="curve"
+    (select)="select($event)">
+
+    <ng-template #defsTemplate>
+        <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+            <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+        </svg:marker>
+    </ng-template>
+
+    <ng-template #nodeTemplate let-node>
+        <svg:g class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.label">
+            <svg:rect [attr.width]="node.width" [attr.height]="node.height" [attr.fill]="node.options.color" />
+            <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.height / 2">{{node.label}}</svg:text>
+        </svg:g>
+    </ng-template>
+
+    <ng-template #linkTemplate let-link>
+        <svg:g class="edge">
+            <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+            </svg:path>
+            <svg:text class="edge-label" text-anchor="middle">
+                <textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                    {{link.label}}
+                </textPath>
+            </svg:text>
+        </svg:g>
+    </ng-template>
+
+</ngx-charts-directed-graph>
